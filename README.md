@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mollah Zone — Modest fashion for every woman</title>
+  <style>
+    /* ====== Reset & base ====== */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{font-family: "Helvetica Neue", Arial, sans-serif;color:#222;background:#fff;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    :root{
+      --primary:#ff7a00;
+      --dark:#0f0f0f;
+      --accent:#5b2cff; /* purple accent for B */
+      --muted:#f5f5f5;
+      --green:#19a974;
+      --container:1200px;
+    }
+    .container{max-width:var(--container);margin:0 auto;padding:0 16px}
+
+    /* Top bar */
+    .topbar{background:var(--dark);color:#fff;padding:10px 0;font-size:14px}
+    .topbar .container{display:flex;justify-content:space-between;align-items:center}
+
+    /* Header */
+    header.site-header{background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:40}
+    .site-header .container{display:flex;align-items:center;gap:20px;padding:14px 16px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.5px}
+    .logo .mark{background:linear-gradient(135deg,var(--accent),#ff7a00);color:#fff;padding:8px 10px;border-radius:8px;font-weight:800}
+    .searchbar{flex:1;display:flex;align-items:center;gap:8px}
+    .searchbar input{flex:1;padding:10px 12px;border-radius:8px;border:1px solid #ddd;font-size:15px}
+    .searchbar button{padding:10px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+
+    .icons{display:flex;gap:12px;align-items:center}
+    .icons button{background:transparent;border:0;cursor:pointer;font-size:18px}
+
+    /* Nav */
+    nav.main-nav{background:#0b0b0b;color:#fff}
+    nav.main-nav .container{display:flex;gap:18px;overflow:auto;padding:10px 16px}
+    nav.main-nav a{padding:8px 10px;white-space:nowrap;font-size:14px;color:#fff;opacity:.95}
+
+    /* Hero */
+    .hero{background:linear-gradient(90deg,#fbf6ff,#f5f5f5);padding:28px 0}
+    .hero .container{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+    .hero .left{flex:1}
+    .hero-card{background:#fff;border-radius:12px;padding:22px;box-shadow:0 8px 30px rgba(11,27,80,.06);position:relative}
+    .hero-card h1{font-size:28px;margin-bottom:12px;color:var(--accent)}
+    .hero-card p{color:#666;margin-bottom:16px}
+    .cta{background:var(--accent);color:#fff;padding:12px 16px;border-radius:10px;display:inline-block;cursor:pointer}
+
+    .badge{position:absolute;background:var(--primary);color:#fff;padding:6px 8px;border-radius:8px;font-size:12px;transform:rotate(-8deg)}
+
+    /* Slider dots */
+    .dots{display:flex;gap:8px;align-items:center;margin-top:10px}
+    .dot{width:10px;height:10px;border-radius:50%;background:#ddd}
+    .dot.active{background:var(--accent)}
+
+    /* Product grid */
+    .section{padding:28px 0}
+    .section h2{font-size:22px;margin-bottom:16px;text-align:center;color:var(--accent)}
+    .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .card{background:#fff;border-radius:12px;padding:12px;border:1px solid #f0f0f0;box-shadow:0 6px 18px rgba(0,0,0,.04);display:flex;flex-direction:column;gap:10px}
+    .card img{width:100%;height:220px;object-fit:cover;border-radius:10px}
+    .prod-title{font-weight:700;color:#111}
+    .price{color:var(--primary);font-weight:800}
+    .card .meta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+    .btn-add{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    .btn-order{padding:10px 14px;border-radius:10px;border:0;background:var(--green);color:#fff;cursor:pointer;font-weight:700}
+
+    /* List style */
+    .products-list {display:flex;flex-direction:column;gap:12px}
+    .prod-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;background:linear-gradient(90deg,#fff,#fbf9ff);border:1px solid #efeafe}
+    .prod-row .left{flex:1}
+    .prod-row .right{min-width:140px;text-align:right}
+
+    /* checkout modal */
+    #checkoutModal{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:9999;padding:16px}
+    .checkout{background:#fff;width:100%;max-width:520px;border-radius:12px;padding:18px;max-height:90vh;overflow:auto}
+    .checkout h3{font-size:20px;margin-bottom:10px;color:var(--accent)}
+    .field{margin:10px 0}
+    .field label{display:block;font-size:14px;margin-bottom:6px;color:#333}
+    .field input,.field textarea,.field select{width:100%;padding:12px;border-radius:8px;border:1px solid #e6e6e6;font-size:14px}
+    .qty-box{display:flex;gap:8px;align-items:center}
+    .qty-box button{padding:8px 12px;background:#eee;border:0;border-radius:6px;cursor:pointer}
+    .checkout .actions{display:flex;gap:8px;margin-top:12px}
+    .checkout .actions .confirm{flex:1;padding:12px;background:var(--accent);color:#fff;border:0;border-radius:8px;cursor:pointer;font-weight:700}
+    .checkout .actions .cancel{flex:1;padding:12px;background:#333;color:#fff;border:0;border-radius:8px;cursor:pointer}
+
+    /* floating actions */
+    .floating-chat{position:fixed;right:18px;bottom:18px;background:var(--accent);color:#fff;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.18);cursor:pointer;z-index:60}
+    .whatsapp{position:fixed;right:18px;bottom:88px;background:#25D366;color:#fff;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.18);cursor:pointer;z-index:60}
+
+    footer{background:#0b0b0b;color:#fff;padding:26px 0;margin-top:28px}
+    footer .container{display:flex;gap:20px;flex-wrap:wrap}
+    footer .col{flex:1;min-width:180px}
+
+    /* admin button */
+    .admin-link{position:fixed;left:18px;bottom:18px;background:#fff;color:#111;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(11,27,80,.12);z-index:1000;text-decoration:none}
+
+    @media (max-width:1000px){ .product-grid{grid-template-columns:repeat(3,1fr)} }
+    @media (max-width:800px){ .product-grid{grid-template-columns:repeat(2,1fr)} .hero .container{flex-direction:column} .hero-right{order:-1} }
+    @media (max-width:520px){
+      .product-grid{grid-template-columns:1fr}
+      .site-header .container{flex-wrap:wrap}
+      .searchbar{order:3;width:100%}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <div>Free shipping over ৳1500 • Cash on delivery available</div>
+      <div>Call: <strong>01791747494</strong></div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">
+        <div class="mark">MZ</div>
+        <div>
+          <div style="font-size:18px;font-weight:800">Mollah Zone</div>
+          <div style="font-size:12px;color:#666">Modest fashion for every woman</div>
+        </div>
+      </div>
+
+      <div class="searchbar" role="search">
+        <input id="searchInput" placeholder="প্রোডাক্ট সার্চ করুন — যেমন: বোরকা, নিকাব, আবায়া…" />
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <div class="icons">
+        <button title="Offers">🎁</button>
+        <button title="Cart">🛒</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="main-nav" aria-label="Main Navigation">
+    <div class="container">
+      <a href="#">Home</a>
+      <a href="#">Burqa</a>
+      <a href="#">Abaya</a>
+      <a href="#">Hijab</a>
+      <a href="#">Accessories</a>
+      <a href="#">New Arrival</a>
+      <a href="#">Offers</a>
+      <a href="#">Contact</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-card left">
+        <h1>নতুন কালেকশন ২০২৫ • মোল্লাহ জোন</h1>
+        <p>আরামদায়ক, মার্জিত ও ট্রেন্ডি — প্রতিটি নারীকে লক্ষ্য করে তৈরি। অর্ডার করুন এখনই।</p>
+        <div style="margin-top:10px">
+          <button class="cta" id="heroOrder">Order Now</button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div style="background:#fff;padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.04);text-align:center">
+          <div style="font-weight:700;color:var(--accent)">Special Offer: ২৫% ছাড় প্রথম ১০০টি অর্ডারে</div>
+          <div style="color:#666;font-size:13px;margin-top:6px">Fast Delivery • Bkash, Nagad, Card</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Exclusive</h2>
+      <div id="productContainer" class="product-grid"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>New Arrivals</h2>
+      <div id="listContainer" class="products-list"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="col">
+        <h3 style="color:#fff">Mollah Zone</h3>
+        <p style="color:#ddd">Modest fashion for every woman. কাস্টমার কেয়ার: 01791747494</p>
+      </div>
+      <div class="col">
+        <h4 style="color:#fff">Useful Links</h4>
+        <ul style="list-style:none;margin-top:8px;line-height:1.8;color:#ddd">
+          <li><a href="#">Shop</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Return Policy</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4 style="color:#fff">Payment</h4>
+        <p style="color:#ddd">Bkash, Nagad, Card, Bank Transfer</p>
+      </div>
+      <div class="col">
+        <h4 style="color:#fff">Follow</h4>
+        <p style="color:#ddd">Facebook • Instagram • YouTube</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- checkout modal -->
+  <div id="checkoutModal">
+    <div class="checkout" role="dialog" aria-modal="true">
+      <h3>Place Order</h3>
+
+      <div class="field">
+        <label>Product</label>
+        <input id="c_product" readonly>
+      </div>
+      <div class="field">
+        <label>Price (৳)</label>
+        <input id="c_price" readonly>
+      </div>
+      <div class="field">
+        <label>Quantity</label>
+        <div class="qty-box">
+          <button type="button" onclick="changeQty(-1)">-</button>
+          <input id="c_qty" style="width:70px;text-align:center;padding:10px;border-radius:6px;border:1px solid #eee" value="1">
+          <button type="button" onclick="changeQty(1)">+</button>
+          <div style="margin-left:auto;font-weight:700">Total: ৳ <span id="c_total">0</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Phone number *</label>
+        <div style="display:flex;gap:8px">
+          <select id="c_country" style="width:110px;padding:10px;border-radius:8px;border:1px solid #eee">
+            <option value="+880">(+880)</option>
+            <option value="+91">(+91)</option>
+            <option value="+1">(+1)</option>
+          </select>
+          <input id="c_phone" placeholder="1XXXXXXXXX" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Full Name *</label>
+        <input id="c_name" placeholder="Full Name">
+      </div>
+      <div class="field">
+        <label>Address *</label>
+        <textarea id="c_address" rows="2" placeholder="Address"></textarea>
+      </div>
+      <div class="field">
+        <label>Select division</label>
+        <select id="c_division">
+          <option value="">Select division</option>
+          <option>Dhaka</option>
+          <option>Chattogram</option>
+          <option>Rajshahi</option>
+          <option>Khulna</option>
+          <option>Barishal</option>
+          <option>Sylhet</option>
+          <option>Rangpur</option>
+          <option>Mymensingh</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button class="confirm" onclick="submitOrder()">Confirm & Send</button>
+        <button class="cancel" onclick="closeCheckout()">Cancel</button>
+      </div>
+      <p style="color:#666;font-size:13px;margin-top:8px">Order will open WhatsApp & Facebook Messenger — আপনার পেজে মেসেজ যাবে।</p>
+    </div>
+  </div>
+
+  <!-- admin quick link -->
+  <a class="admin-link" href="admin.html" title="Open admin panel">Admin Panel</a>
+
+  <!-- floating whatsapp/chat -->
+  <div class="whatsapp" title="WhatsApp" onclick="openWhatsApp()">💬</div>
+
+<script>
+/* -----------------------
+  index.html (Design B)
+  Uses same storage keys as admin.html:
+    products => mz_products_v2
+    orders   => mz_orders_v2
+------------------------*/
+const STORAGE_KEY = 'mz_products_v2';   // must match admin.html
+const ORDERS_KEY = 'mz_orders_v2';      // optional (admin reads orders too)
+
+/* Default (if admin not initialized) */
+const defaultProducts = [
+  {id:1,title:'Classic Cotton Burqa - কটন',price:1290,img:'https://via.placeholder.com/600x400.png?text=Burqa+1',badge:'New'},
+  {id:2,title:'Premium Abaya - সিল্ক ফিনিশ',price:2590,img:'https://via.placeholder.com/600x400.png?text=Abaya+2',badge:''},
+  {id:3,title:'Everyday Hijab - জার্সি',price:350,img:'https://via.placeholder.com/600x400.png?text=Hijab+3',badge:'Hot'},
+  {id:4,title:'Embroidered Niqab',price:990,img:'https://via.placeholder.com/600x400.png?text=Niqab+4',badge:''},
+  {id:5,title:'Travel Set (3 pcs)',price:1990,img:'https://via.placeholder.com/600x400.png?text=Set+5',badge:''},
+  {id:6,title:'Luxury Abaya - Gold Trim',price:4990,img:'https://via.placeholder.com/600x400.png?text=Abaya+6',badge:'Limited'},
+  {id:7,title:'Kids Modest Dress',price:890,img:'https://via.placeholder.com/600x400.png?text=Kids+7',badge:''},
+  {id:8,title:'Lace Hijab (Pack of 2)',price:650,img:'https://via.placeholder.com/600x400.png?text=Hijab+8',badge:'New'},
+];
+
+function getProducts(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw){ localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultProducts)); return defaultProducts; }
+  try{ return JSON.parse(raw); }catch(e){ localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultProducts)); return defaultProducts; }
+}
+function saveProducts(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+
+/* Render */
+function renderProducts(){
+  const arr = getProducts();
+  const container = document.getElementById('productContainer');
+  container.innerHTML = '';
+  arr.slice(0,8).forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div style="position:relative">
+        <img src="${p.img}" alt="${escapeHtml(p.title)}">
+        ${p.badge?`<div class="badge" style="top:12px;left:12px;position:absolute">${escapeHtml(p.badge)}</div>`:''}
+      </div>
+      <div class="prod-title">${escapeHtml(p.title)}</div>
+      <div class="price">৳ ${numberWithCommas(p.price)}</div>
+      <div class="meta">
+        <div></div>
+        <div><button class="btn-add" onclick='openCheckout(${p.id})'>Order Now</button></div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  const list = document.getElementById('listContainer');
+  list.innerHTML = '';
+  arr.forEach(p=>{
+    const r = document.createElement('div');
+    r.className = 'prod-row';
+    r.innerHTML = `
+      <div class="left">
+        <div style="font-weight:700;color:var(--accent)">${escapeHtml(p.title)}</div>
+        <div style="color:#666">Price: ৳ ${numberWithCommas(p.price)}</div>
+      </div>
+      <div class="right">
+        ${p.badge?`<div style="background:#fff3f5;padding:6px;border-radius:6px;margin-bottom:6px;color:#ff4d6d">${escapeHtml(p.badge)}</div>`:''}
+        <div><button class="btn-order" onclick='openCheckout(${p.id})'>Order Now</button></div>
+      </div>
+    `;
+    list.appendChild(r);
+  });
+}
+
+/* helpers */
+function numberWithCommas(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* Checkout logic */
+let currentProduct = null;
+function openCheckout(prodId){
+  const products = getProducts();
+  const p = products.find(x=>x.id===prodId);
+  if(!p) return alert('Product not found');
+  currentProduct = p;
+  document.getElementById('c_product').value = p.title;
+  document.getElementById('c_price').value = p.price;
+  document.getElementById('c_qty').value = 1;
+  document.getElementById('c_total').innerText = p.price;
+  document.getElementById('checkoutModal').style.display = 'flex';
+  setTimeout(()=>document.getElementById('c_phone').focus(),200);
+}
+function closeCheckout(){ document.getElementById('checkoutModal').style.display = 'none'; currentProduct = null; }
+function changeQty(delta){
+  const qEl = document.getElementById('c_qty');
+  let q = parseInt(qEl.value) || 1;
+  q = Math.max(1,q+delta);
+  qEl.value = q;
+  updateTotal();
+}
+function updateTotal(){
+  const q = parseInt(document.getElementById('c_qty').value) || 1;
+  const price = parseFloat(document.getElementById('c_price').value) || 0;
+  document.getElementById('c_total').innerText = numberWithCommas(q * price);
+}
+document.getElementById('c_qty').addEventListener('input', updateTotal);
+document.getElementById('c_qty').addEventListener('change', updateTotal);
+
+function submitOrder(){
+  const pname = document.getElementById('c_product').value;
+  const price = parseFloat(document.getElementById('c_price').value) || 0;
+  const qty = parseInt(document.getElementById('c_qty').value) || 1;
+  const phone = document.getElementById('c_country').value + document.getElementById('c_phone').value.trim();
+  const name = document.getElementById('c_name').value.trim();
+  const address = document.getElementById('c_address').value.trim();
+  const division = document.getElementById('c_division').value || '';
+  if(!phone || !name || !address){ alert('অনুগ্রহ করে নাম, ফোন ও ঠিকানা পুরন করুন'); return; }
+
+  const total = qty * price;
+  const message =
+    `📦 New Order\n` +
+    `———————————————\n` +
+    `👤 Name: ${name}\n` +
+    `📞 Phone: ${phone}\n` +
+    `🏠 Address: ${address}\n` +
+    `📍 Division: ${division}\n` +
+    `🛍 Product: ${pname}\n` +
+    `✖ Qty: ${qty}\n` +
+    `💰 Total: ৳ ${total}\n` +
+    `———————————————\n` +
+    `Sent from Mollah Zone`;
+
+  // Replace with your actual values if needed
+  const whatsappNumber = '8801791747494'; // no plus sign
+  const fbPageUser = ''; // put FB page username here if you want messenger open
+
+  // push order to localStorage so admin can read (works if same origin)
+  try{
+    const orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+    const ord = { id: Date.now(), when: new Date().toISOString(), name, phone, address, division, product: pname, qty, total, status:'pending' };
+    orders.unshift(ord);
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+  }catch(e){ /* ignore */ }
+
+  // open WhatsApp
+  window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+
+  // open FB messenger if provided
+  if(fbPageUser){
+    window.open(`https://m.me/${fbPageUser}?ref=${encodeURIComponent(message)}`, '_blank');
+  }
+
+  alert('Order opened in WhatsApp / Messenger. Seller will get the message.');
+  closeCheckout();
+}
+
+/* Search */
+document.getElementById('searchBtn').addEventListener('click', ()=>{
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const arr = getProducts().filter(p=>p.title.toLowerCase().includes(q));
+  // render filtered
+  const container = document.getElementById('productContainer'); container.innerHTML='';
+  arr.forEach(p=>{
+    const div = document.createElement('div');
+    div.className='card';
+    div.innerHTML = `
+      <div style="position:relative">
+        <img src="${p.img}" alt="${escapeHtml(p.title)}">
+        ${p.badge?`<div class="badge" style="top:12px;left:12px;position:absolute">${escapeHtml(p.badge)}</div>`:''}
+      </div>
+      <div class="prod-title">${escapeHtml(p.title)}</div>
+      <div class="price">৳ ${numberWithCommas(p.price)}</div>
+      <div class="meta"><div></div><div><button class="btn-add" onclick='openCheckout(${p.id})'>Order Now</button></div></div>
+    `;
+    container.appendChild(div);
+  });
+  const list = document.getElementById('listContainer'); list.innerHTML='';
+  arr.forEach(p=>{
+    const r=document.createElement('div'); r.className='prod-row';
+    r.innerHTML = `<div class="left"><div style="font-weight:700;color:var(--accent)">${escapeHtml(p.title)}</div><div style="color:#666">Price: ৳ ${numberWithCommas(p.price)}</div></div><div class="right">${p.badge?`<div style="background:#fff3f5;padding:6px;border-radius:6px;margin-bottom:6px;color:#ff4d6d">${escapeHtml(p.badge)}</div>`:''}<div><button class="btn-order" onclick='openCheckout(${p.id})'>Order Now</button></div></div>`;
+    list.appendChild(r);
+  });
+});
+
+/* Hero order opens first product */
+document.getElementById('heroOrder').addEventListener('click', ()=>{
+  const arr = getProducts();
+  if(arr.length) openCheckout(arr[0].id);
+  else alert('No products yet');
+});
+
+/* WhatsApp floating */
+function openWhatsApp(){
+  const num='8801791747494';
+  const text=encodeURIComponent('Hello Mollah Zone, I want to ask about...');
+  window.open('https://wa.me/'+num+'?text='+text,'_blank');
+}
+
+/* init */
+renderProducts();
+
+</script>
+</body>
+</html>
